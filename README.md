@@ -8,7 +8,6 @@ Static project page for *From Region Arrival to Instance-Level Grounding in Visi
 3. Settings → Pages → Source: *Deploy from a branch* → `main` / `(root)`.
 
 ## Before going public (search `TODO` in index.html)
-- Code / REVERIE-AIM buttons are "coming soon"; swap the `<span class="btn soon">` for `<a class="btn" href="...">` when ready.
 - Optional: upload the full video to YouTube and swap in the commented `<iframe>` in the Video section.
 - Update the BibTeX with the official proceedings entry once available.
 
