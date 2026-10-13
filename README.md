@@ -9,7 +9,7 @@ Static project page for *From Region Arrival to Instance-Level Grounding in Visi
 
 ## Before going public (search `TODO` in index.html)
 - Co-author links for Ruoxi Yang, Wei Tao and Jiwen Zhang are `href="#"`.
-- arXiv / Code / REVERIE-AIM buttons are "coming soon"; swap the `<span class="btn soon">` for `<a class="btn" href="...">` when ready.
+- Code / REVERIE-AIM buttons are "coming soon"; swap the `<span class="btn soon">` for `<a class="btn" href="...">` when ready.
 - Optional: upload the full video to YouTube and swap in the commented `<iframe>` in the Video section.
 - Update the BibTeX with the official proceedings entry once available.
 
@@ -17,6 +17,5 @@ Static project page for *From Region Arrival to Instance-Level Grounding in Visi
 - `static/videos/realm_supp.mp4` – full supplementary video (720p, with audio)
 - `static/videos/stretch.mp4`, `humanoid.mp4` – real-world clips
 - `static/images/` – Fig. 1 and video posters cropped from the paper/video
-- `static/pdf/REALM_CoRL2026.pdf` – camera-ready paper
 
 Page structure inspired by [Nerfies](https://nerfies.github.io/) (CC BY-SA 4.0).
