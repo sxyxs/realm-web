@@ -12,7 +12,6 @@ Static project page for *From Region Arrival to Instance-Level Grounding in Visi
 - arXiv / Code / REVERIE-AIM buttons are "coming soon"; swap the `<span class="btn soon">` for `<a class="btn" href="...">` when ready.
 - Optional: upload the full video to YouTube and swap in the commented `<iframe>` in the Video section.
 - Update the BibTeX with the official proceedings entry once available.
-- `og:url` in `<head>` assumes `sxyxs.github.io/realm/`.
 
 ## Files
 - `static/videos/realm_supp.mp4` – full supplementary video (720p, with audio)
