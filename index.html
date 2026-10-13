@@ -438,12 +438,8 @@
 
     <div class="narrow">
       <h3>Visibility-Aware Stop Penalty (VSP)</h3>
-      <p>Imitation learning alone makes the agent stop too early. VSP measures how strongly the model prefers <code>stop</code> over every other action, and penalizes that margin <strong>only when the target is not visible</strong>, so correct stops are left alone:</p>
-      <div class="eq">
-        <div>m<sub>b</sub> = ẑ<sub>b,stop</sub> − max<sub>k≠stop</sub> ẑ<sub>b,k</sub><span class="c">// stop margin</span></div>
-        <div>L<sub>vsp</sub> = (1/N<sub>inv</sub>) Σ<sub>b</sub> ReLU(m<sub>b</sub>) · 𝟙[v<sub>b</sub> = 0]<span class="c">// only target-invisible samples</span></div>
-        <div>L<sub>total</sub> = L<sub>base</sub> + λ<sub>vsp</sub> L<sub>vsp</sub></div>
-      </div>
+      <p>Trained with imitation learning alone, the refinement policy tends to stop too early, often before the target has even come into view. Once it stops, the episode is over and there is no chance to recover.</p>
+      <p>VSP adds a training penalty that targets exactly this mistake. Whenever the model is inclined to <strong>stop while the target is still not visible</strong>, it is penalized, and the more confidently it wants to stop, the larger the penalty. When the target <em>is</em> visible, stopping is not penalized at all. The agent therefore keeps searching and adjusting its viewpoint until it can actually see the object, and is still free to stop as soon as it does.</p>
     </div>
   </div>
 </section>
