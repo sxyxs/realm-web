@@ -6,7 +6,6 @@
   <title>REALM: From Region Arrival to Instance-Level Grounding in VLN</title>
   <meta name="description" content="REALM (CoRL 2026 Spotlight): a plug-and-play refinement module that closes the Last-3-Meter Grounding Gap in Vision-and-Language Navigation.">
   <meta name="keywords" content="Vision-and-Language Navigation, VLN, REVERIE, Object Grounding, Embodied AI, CoRL 2026, REALM, REVERIE-AIM">
-  <!-- Social preview -->
   <meta property="og:title" content="REALM: From Region Arrival to Instance-Level Grounding in VLN">
   <meta property="og:description" content="CoRL 2026 Spotlight. Closing the Last-3-Meter Grounding Gap in Vision-and-Language Navigation.">
   <meta property="og:image" content="static/images/gap.jpg">
@@ -15,191 +14,197 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --ink: #14171f;
-      --ink-2: #3d4352;
-      --muted: #6b7180;
-      --line: #e6e8ee;
+      --ink: #0f1b2d;
+      --ink-2: #3b4658;
+      --muted: #5b6578;
+      --line: #e3e7ee;
       --bg: #ffffff;
-      --bg-soft: #f6f7fa;
-      --accent: #2f6b3f;        /* REALM green (refinement stage in Fig. 2) */
-      --accent-soft: #e8f2ea;
-      --nav: #2a5aa8;           /* upstream navigation blue */
-      --ground: #7a3fb0;        /* grounding purple */
+      --bg-soft: #f4f6fa;
+      --navy: #1d3557;
+      --navy-2: #13223a;
+      --gold: #f2c14e;
+      --gold-ink: #9a6a00;
+      --gold-soft: #fbefcc;
+      --accent: #1d3557;      /* REALM bars, primary actions */
+      --ok: #2f6b3f;          /* widget: success */
+      --ok-soft: #e8f2ea;
+      --nav: #2a5aa8;
       --warn: #c9372c;
-      --radius: 12px;
-      --max: 980px;
+      --radius: 14px;
+      --max: 1160px;
+      --display: "Space Grotesk", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
       margin: 0; background: var(--bg); color: var(--ink);
-      font: 16.5px/1.7 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font: 17px/1.65 "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
     }
-    a { color: var(--nav); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    a { color: var(--navy); }
     img, video { max-width: 100%; display: block; }
-    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
-    .narrow { max-width: 820px; margin: 0 auto; }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+    .narrow { max-width: 1000px; margin: 0 auto; }
+    code { font-family: var(--mono); font-size: .9em; background: var(--bg-soft); padding: 1px 6px; border-radius: 4px; }
 
-    /* ---------- Hero ---------- */
-    header.hero { padding: 64px 0 28px; text-align: center; }
-    .venue { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; margin: 26px 0 4px; }
-    .venue .conf { font-size: clamp(22px, 3vw, 28px); font-weight: 700; letter-spacing: -0.01em; color: #1d3557; }
-    .venue .spot {
-      font-size: clamp(17px, 2.2vw, 21px); font-weight: 700; color: #fff; letter-spacing: .01em;
-      padding: 5px 16px; border-radius: 999px;
-      background: linear-gradient(135deg, #e0a100, #c96a00); box-shadow: 0 4px 14px rgba(201,106,0,.3);
-    }
-    h1.title {
-      font-size: clamp(28px, 4.6vw, 44px); line-height: 1.18; font-weight: 700;
-      letter-spacing: -0.02em; margin: 0 auto 10px; max-width: 900px;
-    }
-    h1.title .name { color: var(--accent); }
-    .subtitle { font-size: clamp(16px, 2vw, 19px); color: var(--ink-2); margin: 0 auto 26px; max-width: 760px; }
-    .authors { font-size: 17px; margin: 0 auto 6px; max-width: 860px; }
-    .authors span { white-space: nowrap; margin: 0 7px; }
-    .authors a { color: var(--ink); border-bottom: 1px solid #c9ccd6; }
-    .authors a:hover { text-decoration: none; border-color: var(--ink); }
-    .affils { color: var(--muted); font-size: 14.5px; margin: 8px auto 4px; max-width: 860px; }
-    .affils span { margin: 0 8px; white-space: nowrap; }
-    .notes { color: var(--muted); font-size: 13.5px; }
+    /* Top bar */
+    .topbar { border-bottom: 1px solid var(--line); background: #fff; }
+    .topbar .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; padding-bottom: 14px; }
+    .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font: 700 18px var(--display); letter-spacing: .02em; }
+    .brand i { width: 28px; height: 28px; border-radius: 8px; background: var(--navy); display: grid; place-items: center; }
+    .topnav { display: flex; flex-wrap: wrap; gap: 4px 22px; font-size: 14.5px; font-weight: 500; }
+    .topnav a { color: var(--ink-2); text-decoration: none; }
+    .topnav a:hover { color: var(--ink); }
 
-    .links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 26px 0 8px; }
+    /* Hero */
+    .hero { background: var(--bg-soft); border-bottom: 1px solid var(--line); }
+    .hero .wrap { padding-top: 72px; padding-bottom: 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+    .venue { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .venue .conf { font: 700 22px var(--display); color: var(--navy); }
+    .venue .spot { font: 700 16px var(--display); color: #fff; background: linear-gradient(135deg, #c98a00, #b05f00); padding: 4px 14px; border-radius: 999px; }
+    h1.title { margin: 0; max-width: 980px; font: 700 clamp(32px, 4.6vw, 56px)/1.08 var(--display); letter-spacing: -0.025em; }
+    .subtitle { margin: 0; max-width: 760px; font-size: 19px; color: var(--ink-2); }
+    .subtitle strong { color: var(--navy); }
+    .authors { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px; font-size: 17px; font-weight: 500; margin-top: 6px; }
+    .authors a { color: var(--ink); text-decoration: none; border-bottom: 1px solid #c4ccd8; }
+    .authors a:hover { border-color: var(--ink); }
+    .authors sup { color: var(--muted); }
+    .affils { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 18px; font-size: 14px; color: var(--muted); }
+    .notes { font-size: 13px; color: var(--muted); }
+    .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 8px; }
     .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: #1c1f27; color: #fff; padding: 9px 18px; border-radius: 999px;
-      font-size: 15px; font-weight: 500; border: 0; cursor: pointer; font-family: inherit;
-      transition: transform .12s ease, background .12s ease;
+      display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 10px;
+      background: #fff; border: 1px solid #cdd4df; color: var(--ink); text-decoration: none; font: 600 15px "IBM Plex Sans", sans-serif;
+      cursor: pointer; transition: transform .12s ease, border-color .12s ease, background .12s ease;
     }
-    .btn:hover { background: #000; text-decoration: none; transform: translateY(-1px); }
-    .btn svg { width: 17px; height: 17px; fill: currentColor; }
-    .btn.soon { background: var(--bg-soft); color: var(--muted); cursor: default; border: 1px dashed #cfd3dc; }
-    .btn.soon:hover { transform: none; }
-    .btn.soon small { font-size: 12px; font-weight: 500; }
+    .btn:hover { border-color: var(--ink); transform: translateY(-1px); }
+    .btn.primary { background: var(--navy); border-color: var(--navy); color: #fff; }
+    .btn.primary:hover { background: var(--ink); }
+    .btn svg { width: 17px; height: 17px; }
+    .hero-fig { margin: 28px 0 0; width: 100%; max-width: 1080px; }
+    .hero-fig .frame-card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: 0 20px 50px rgba(15,27,45,.08); }
+    .hero-fig img { width: 100%; border-radius: 8px; }
+    .hero-fig figcaption { margin: 14px auto 0; font-size: 15px; color: var(--ink-2); max-width: 820px; }
+    .hero-fig figcaption strong { color: var(--ink); }
 
-    /* ---------- Teaser ---------- */
-    .caption { color: var(--ink-2); font-size: 15px; text-align: center; margin: 14px auto 0; max-width: 820px; }
-    .caption b { color: var(--ink); }
+    /* Key numbers */
+    .keynums { border-bottom: 1px solid var(--line); }
+    .keynums .wrap { padding-top: 36px; padding-bottom: 36px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 28px; }
+    .kn { display: flex; flex-direction: column; gap: 4px; }
+    .eyebrow { font: 500 12.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .kn b { font: 700 34px var(--display); letter-spacing: -0.02em; color: var(--ink); }
+    .kn span:last-child { font-size: 14.5px; color: var(--ink-2); }
 
-    /* ---------- Sections ---------- */
-    section { padding: 56px 0; }
-    section.alt { background: var(--bg-soft); }
-    h2 {
-      font-size: clamp(24px, 3vw, 30px); letter-spacing: -0.015em; margin: 0 0 22px;
-      text-align: center; font-weight: 700;
-    }
-    h3 { font-size: 19px; margin: 34px 0 10px; letter-spacing: -0.01em; }
-    p { margin: 0 0 14px; color: var(--ink-2); }
-    p strong, li strong { color: var(--ink); }
-    .abstract p { text-align: justify; hyphens: auto; }
-    .figure { margin: 26px 0 0; }
-    .figure img { width: 100%; border-radius: 8px; background: #fff; border: 1px solid var(--line); }
-    .figure .caption { text-align: left; font-size: 14.5px; }
+    /* Sections */
+    section.sec { padding: 88px 0; }
+    section.alt { background: var(--bg-soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .sec .wrap { display: flex; flex-direction: column; gap: 36px; }
+    .sec-head { display: flex; flex-wrap: wrap; gap: 24px 64px; align-items: end; }
+    .sec-head > div { flex: 1 1 320px; display: flex; flex-direction: column; gap: 10px; }
+    .sec-head > p { flex: 999 1 480px; margin: 0; color: var(--ink-2); }
+    .sec-head .eyebrow { color: var(--gold-ink); }
+    h2 { margin: 0; font: 700 34px/1.15 var(--display); letter-spacing: -0.02em; }
+    h3 { font-family: var(--display); }
+    p { margin: 0; color: var(--ink-2); }
+    p strong { color: var(--ink); }
 
-    /* TL;DR strip */
-    .tldr {
-      border-left: 4px solid var(--accent); background: var(--accent-soft);
-      padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 0 0 26px; color: var(--ink);
-    }
-    .tldr b { color: var(--accent); }
-
-    /* Gap stat */
-    .gapstat { display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: center; margin: 30px auto 6px; max-width: 700px; }
-    .stat { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; text-align: center; }
-    .stat .num { font-size: 40px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
-    .stat .lbl { font-size: 14px; color: var(--muted); margin-top: 4px; }
-    .stat.bad .num { color: var(--warn); }
-    .vs { font-weight: 600; color: var(--muted); }
-    .gapnote { text-align: center; font-size: 14px; color: var(--muted); }
+    /* Abstract */
+    .abstract-grid { display: flex; flex-wrap: wrap; gap: 32px 64px; }
+    .abstract-grid > div:first-child { flex: 1 1 240px; display: flex; flex-direction: column; gap: 10px; }
+    .abstract-grid > div:last-child { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
+    .lede { font-size: 21px; line-height: 1.55; color: var(--ink); font-weight: 500; }
+    .hl { background: var(--gold-soft); padding: 0 4px; border-radius: 4px; }
 
     /* Metric cards */
-    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; }
-    .card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 18px 16px; }
-    .card .k { font-family: "JetBrains Mono", monospace; font-size: 13px; font-weight: 500; color: var(--accent); }
-    .card h4 { margin: 4px 0 6px; font-size: 16.5px; }
-    .card p { font-size: 14.5px; margin: 0; line-height: 1.6; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+    .card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; gap: 8px; }
+    .card .k { font: 500 13px var(--mono); color: var(--navy); background: #e8edf5; align-self: start; padding: 2px 8px; border-radius: 6px; }
+    .card h3 { margin: 0; font-size: 19px; }
+    .card p { font-size: 15px; }
 
-    /* Pipeline stages */
-    .stages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; }
-    .stage { border-radius: var(--radius); padding: 16px 18px; border: 1px solid var(--line); background: #fff; border-top: 4px solid var(--c); }
-    .stage .n { font-size: 13px; font-weight: 600; color: var(--c); text-transform: uppercase; letter-spacing: .06em; }
-    .stage h4 { margin: 2px 0 6px; font-size: 16.5px; }
-    .stage p { font-size: 14.5px; margin: 0; line-height: 1.6; }
-    .eq {
-      font-family: "JetBrains Mono", monospace; font-size: 14px; background: #fff; border: 1px solid var(--line);
-      border-radius: 10px; padding: 12px 16px; margin: 6px 0 16px; overflow-x: auto; color: var(--ink); line-height: 2;
-    }
-    .eq .c { color: var(--muted); margin-left: 18px; font-size: 12.5px; }
+    /* Method */
+    .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 14px; }
+    .stage { flex: 1 1 260px; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+    .stage .n { font: 400 13px var(--mono); color: var(--muted); }
+    .stage h3 { margin: 0; font-size: 21px; }
+    .stage p { font-size: 15px; }
+    .stage.ours { background: var(--navy); border-color: var(--navy); color: #fff; }
+    .stage.ours .n { color: var(--gold); }
+    .stage.ours h3 { color: #fff; }
+    .stage.ours p { color: #d6deea; }
+    .flow .arrow { flex: 0 0 auto; display: flex; align-items: center; color: #9aa3b2; }
+    .vsp { display: flex; flex-wrap: wrap; gap: 24px 64px; background: var(--bg-soft); border-radius: 16px; padding: 32px; }
+    .vsp h3 { flex: 1 1 260px; margin: 0; font-size: 22px; line-height: 1.3; }
+    .vsp h3 span { color: var(--gold-ink); }
+    .vsp > div { flex: 999 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
 
-    /* Dataset numbers */
-    .nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 18px; }
-    .nums div { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 12px; text-align: center; }
-    .nums b { display: block; font-size: 26px; letter-spacing: -0.02em; color: var(--ink); }
-    .nums span { font-size: 13.5px; color: var(--muted); line-height: 1.4; display: block; margin-top: 2px; }
+    /* Dataset (dark) */
+    .dark { background: var(--ink); color: #fff; }
+    .dark h2 { color: #fff; }
+    .dark .sec-head .eyebrow { color: var(--gold); }
+    .dark .sec-head > p { color: #c3cddb; }
+    .dnums { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: #2a3a52; border: 1px solid #2a3a52; border-radius: 16px; overflow: hidden; }
+    .dnums div { background: var(--navy-2); padding: 28px 24px; display: flex; flex-direction: column; gap: 6px; }
+    .dnums b { font: 700 40px var(--display); letter-spacing: -0.02em; }
+    .dnums b.gold { color: var(--gold); }
+    .dnums span { font-size: 14.5px; color: #c3cddb; }
+    .btn.gold { align-self: start; background: var(--gold); border-color: var(--gold); color: var(--ink); }
+    .btn.gold:hover { background: #f5cd6a; }
 
-    /* Results tabs + bars */
-    .tabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 4px 0 22px; }
-    .tab {
-      font: 500 14.5px Inter, sans-serif; padding: 7px 15px; border-radius: 999px; cursor: pointer;
-      border: 1px solid var(--line); background: #fff; color: var(--ink-2);
-    }
-    .tab[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
-    .bars { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 820px; margin: 0 auto; }
-    .metric { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 14px 12px; }
-    .metric .mname { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
-    .row { display: grid; grid-template-columns: 66px 1fr 48px; align-items: center; gap: 8px; font-size: 13px; margin: 6px 0; }
+    /* Results */
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tab { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid #cdd4df; background: #fff; color: var(--ink-2); font: 500 14.5px "IBM Plex Sans", sans-serif; cursor: pointer; }
+    .tab:hover { border-color: var(--ink); }
+    .tab[aria-selected="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+    .bars { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .metric { border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; gap: 14px; background: #fff; }
+    .mhead { display: flex; justify-content: space-between; align-items: baseline; font-weight: 600; }
+    .delta { font: 500 14px var(--mono); color: #7a5400; background: var(--gold-soft); padding: 1px 8px; border-radius: 6px; }
+    .row { display: grid; grid-template-columns: 72px 1fr 52px; gap: 10px; align-items: center; font-size: 13.5px; }
     .row .who { color: var(--muted); }
-    .track { height: 12px; background: var(--bg-soft); border-radius: 6px; overflow: hidden; }
-    .fill { height: 100%; border-radius: 6px; transition: width .5s cubic-bezier(.2,.7,.2,1); }
-    .fill.base { background: #b7bcc8; }
-    .fill.ours { background: var(--accent); }
-    .row .v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
-    .delta { margin-top: 8px; font-size: 13px; color: var(--accent); font-weight: 600; }
-    .legend { display: flex; gap: 18px; justify-content: center; font-size: 13.5px; color: var(--muted); margin-top: 14px; }
-    .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
-
-    details { overflow: hidden; max-width: 100%; margin-top: 22px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); }
-    summary { cursor: pointer; padding: 12px 16px; font-weight: 600; font-size: 15px; }
-    .tablewrap { overflow-x: auto; padding: 0 16px 14px; }
+    .row.us .who { color: var(--ink); font-weight: 600; }
+    .track { height: 10px; background: #eef1f6; border-radius: 5px; overflow: hidden; }
+    .fill { height: 100%; border-radius: 5px; transition: width .5s cubic-bezier(.2,.7,.2,1); }
+    .fill.base { background: #a9b3c3; }
+    .fill.ours { background: var(--navy); }
+    .row .v { text-align: right; font-family: var(--mono); }
+    .row.us .v { font-weight: 500; }
+    details { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; max-width: 100%; }
+    summary { cursor: pointer; padding: 14px 18px; font-weight: 600; font-size: 15px; }
+    .tablewrap { overflow-x: auto; padding: 0 18px 16px; }
     table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
-    th, td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    th, td { padding: 7px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
     th:first-child, td:first-child { text-align: left; }
-    th { font-weight: 600; color: var(--ink); background: var(--bg-soft); }
-    tr.ours td { font-weight: 700; color: var(--accent); background: var(--accent-soft); }
+    th { font-weight: 600; background: var(--bg-soft); }
+    tr.ours td { font-weight: 700; color: var(--navy); background: #e8edf5; }
     .meta { font-size: 13px; color: var(--muted); padding: 8px 0 10px; }
 
     /* Real world */
-    .vgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 22px; }
-    .vcard video { width: 100%; border-radius: 10px; background: #000; }
-    .vcard .caption { text-align: left; font-size: 14px; margin-top: 8px; }
-    .rw-table { overflow-x: auto; max-width: 560px; margin: 8px auto 0; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 14px 4px; }
-    .rw-table td.up { color: var(--accent); font-weight: 700; }
-    .video-main { width: 100%; border-radius: var(--radius); background: #000; }
+    .rwnums { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .rwnums div { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; display: flex; flex-direction: column; gap: 4px; }
+    .rwnums span { font-size: 14px; color: var(--muted); }
+    .rwnums b { font: 700 30px var(--display); }
+    .rwnums b small { color: #8a94a6; font-weight: 500; font-size: 22px; }
+    .vgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+    .vgrid figure { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+    .vgrid video { width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius); background: var(--ink); }
+    .vgrid figcaption { font-size: 15px; color: var(--ink-2); }
+    .vgrid figcaption strong { color: var(--ink); }
+    .video-main { width: 100%; border-radius: 16px; background: var(--ink); box-shadow: 0 20px 50px rgba(15,27,45,.12); }
 
     /* BibTeX */
-    .bib { position: relative; }
-    pre {
-      background: #14171f; color: #e7e9ee; border-radius: var(--radius); padding: 18px 20px;
-      font: 13.5px/1.6 "JetBrains Mono", monospace; overflow-x: auto; margin: 0; white-space: pre-wrap; word-break: break-word;
-    }
-    .copy {
-      position: absolute; top: 10px; right: 10px; font: 500 12.5px Inter, sans-serif;
-      background: #2b303c; color: #e7e9ee; border: 0; border-radius: 7px; padding: 6px 11px; cursor: pointer;
-    }
-    .copy:hover { background: #3a4050; }
+    .bibhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .bibhead h2 { font-size: 28px; }
+    pre { margin: 0; background: var(--ink); color: #e6ebf2; border-radius: var(--radius); padding: 24px; font: 14px/1.7 var(--mono); white-space: pre-wrap; word-break: break-word; }
 
-    footer { padding: 34px 0 50px; text-align: center; color: var(--muted); font-size: 13.5px; border-top: 1px solid var(--line); }
+    footer { background: var(--bg-soft); border-top: 1px solid var(--line); }
+    footer .wrap { padding-top: 32px; padding-bottom: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; font-size: 13.5px; color: var(--muted); }
     footer a { color: var(--ink-2); }
-
-
-    /* Hero figure */
-    .hero-fig { margin: 34px auto 0; max-width: 1000px; }
-    .hero-fig img { width: 100%; border-radius: var(--radius); background: #fff; border: 1px solid var(--line); box-shadow: 0 10px 40px rgba(20,23,31,.08); }
 
     /* ---------- Interactive gap widget ---------- */
     .sim { margin-top: 28px; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 18px; box-shadow: 0 8px 30px rgba(20,23,31,.06); }
@@ -226,11 +231,11 @@
     .verdict b { display: block; font-size: 14.5px; }
     .verdict.fail { background: #f3f4f6; color: var(--ink-2); }
     .verdict.gap  { background: #fff4e0; color: #7a4a00; border: 1px solid #f3cf8e; }
-    .verdict.ok   { background: var(--accent-soft); color: var(--accent); border: 1px solid #bcd9c3; }
+    .verdict.ok   { background: var(--ok-soft); color: var(--ok); border: 1px solid #bcd9c3; }
     .checks .grp { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 10px 0 4px; }
     .chk { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: center; font-size: 14px; padding: 5px 0; border-bottom: 1px solid var(--line); }
     .chk .ic { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 700; }
-    .chk .ic.y { background: var(--accent); } .chk .ic.n { background: var(--warn); }
+    .chk .ic.y { background: var(--ok); } .chk .ic.n { background: var(--warn); }
     .chk .val { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
 
     .sim-ctrl { display: grid; grid-template-columns: 1.4fr 1fr auto; gap: 14px 22px; align-items: end; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
@@ -238,7 +243,7 @@
     .sim-ctrl label span { display: block; margin-bottom: 4px; }
     .sim-ctrl input[type=range] { width: 100%; accent-color: var(--ink); }
     .presets { display: flex; gap: 8px; flex-wrap: wrap; }
-    .presets button { font: 500 13.5px Inter, sans-serif; padding: 8px 13px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; white-space: nowrap; }
+    .presets button { font: 500 13.5px "IBM Plex Sans", sans-serif; padding: 8px 13px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; white-space: nowrap; }
     .presets button:hover { border-color: var(--ink); }
     .presets button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
     .presets button:disabled { opacity: .6; cursor: default; }
@@ -250,29 +255,47 @@
       .sim-body { gap: 12px; }
     }
 
+    .sim { margin-top: 0; border-radius: 18px; }
+    .sim-cap { margin-top: 14px; font-size: 14.5px; color: var(--muted); }
+    .sim-ctrl input[type=range] { accent-color: var(--navy); }
+
+
     @media (max-width: 760px) {
-      header.hero { padding-top: 40px; }
-      .cards, .stages { grid-template-columns: 1fr; }
-      .affils span, .authors span { white-space: normal; display: inline-block; }
-      .eq .c { display: block; margin: -8px 0 4px; }
-      .nums { grid-template-columns: 1fr 1fr; }
-      .vgrid { grid-template-columns: 1fr; }
-      .gapstat { grid-template-columns: 1fr; }
-      .vs { text-align: center; }
-      .abstract p { text-align: left; }
-      section { padding: 42px 0; }
+      section.sec { padding: 56px 0; }
+      .hero .wrap { padding-top: 44px; padding-bottom: 44px; }
+      h2 { font-size: 28px; }
+      .flow .arrow { display: none; }
+      .vsp { padding: 22px; }
       th, td { padding: 6px 7px; font-size: 13px; }
+      .kn b { font-size: 28px; }
+      .lede { font-size: 18.5px; }
     }
-    @media (max-width: 560px) { .bars { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
-<!-- ======================= HERO ======================= -->
-<header class="hero">
+<header class="topbar">
   <div class="wrap">
+    <a class="brand" href="#top">
+      <i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f2c14e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v4M12 18v4M2 12h4M18 12h4"></path></svg></i>REALM
+    </a>
+    <nav class="topnav" aria-label="Sections">
+      <a href="#gap">The Gap</a>
+      <a href="#method">Method</a>
+      <a href="#dataset">Dataset</a>
+      <a href="#results">Results</a>
+      <a href="#real">Real World</a>
+      <a href="#bibtex">BibTeX</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ======================= HERO ======================= -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="venue"><span class="conf">CoRL 2026</span><span class="spot">Spotlight</span></div>
     <h1 class="title">From Region Arrival to Instance-Level Grounding in Vision-and-Language Navigation</h1>
-    <p class="subtitle"><b>REALM</b>: Region-to-Entity Alignment for Last-3-Meter Navigation</p>
+    <p class="subtitle"><strong>REALM</strong> — Region-to-Entity Alignment for Last-3-Meter Navigation</p>
 
     <div class="authors">
       <span><a href="https://scholar.google.com.au/citations?user=hjp3bMYAAAAJ&amp;hl=en" target="_blank" rel="noopener">Xiangyu Shi</a><sup>1</sup></span>
@@ -281,6 +304,7 @@
       <span><a href="https://scholar.google.com/citations?user=wQCKDNQAAAAJ&amp;hl=en" target="_blank" rel="noopener">Jiwen Zhang</a><sup>3</sup></span>
       <span><a href="https://scholar.google.com/citations?user=vsfwX2EAAAAJ&amp;hl=en" target="_blank" rel="noopener">Yanyuan Qiao</a><sup>4†</sup></span>
       <span><a href="https://scholar.google.com/citations?user=aKXe1FEAAAAJ&amp;hl=en" target="_blank" rel="noopener">Qi Wu</a><sup>1‡</sup></span>
+    
     </div>
     <div class="affils">
       <span><sup>1</sup>Australian Institute for Machine Learning, Adelaide University</span>
@@ -290,52 +314,59 @@
     </div>
     <div class="notes">† Project leader &nbsp;·&nbsp; ‡ Corresponding author</div>
 
-    <div class="venue">
-      <span class="conf">CoRL 2026</span>
-      <span class="spot">Spotlight</span>
-    </div>
-
     <div class="links">
-      <a class="btn" href="https://arxiv.org/abs/2607.03792" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm-1 7V3.5L18.5 9zM8 13h8v1.5H8zm0 3h8v1.5H8z"/></svg>arXiv
-      </a>
+      <a class="btn primary" href="https://arxiv.org/abs/2607.03792" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6M8 13h8M8 17h6"></path></svg>Paper (arXiv)</a>
       <a class="btn" href="#video">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Video
-      </a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16l13-8z"></path></svg>Video</a>
       <a class="btn" href="https://github.com/sxyxs/REVERIE-AIM" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>Code
-      </a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"></path></svg>Code</a>
       <a class="btn" href="https://github.com/sxyxs/REVERIE-AIM/tree/main/data" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M12 3C7.6 3 4 4.3 4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6c0-1.7-3.6-3-8-3zm0 2c3.9 0 6 1.1 6 1.5S15.9 8 12 8 6 6.9 6 6.5 8.1 5 12 5zm6 13c0 .4-2.1 1.5-6 1.5S6 18.4 6 18v-2.3c1.5.8 3.6 1.3 6 1.3s4.5-.5 6-1.3zm0-5c0 .4-2.1 1.5-6 1.5S6 13.4 6 13v-2.3c1.5.8 3.6 1.3 6 1.3s4.5-.5 6-1.3z"/></svg>REVERIE-AIM Dataset
-      </a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path></svg>REVERIE-AIM Dataset</a>
       <a class="btn" href="#bibtex">
-        <svg viewBox="0 0 24 24"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>BibTeX
-      </a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v6H7l-2 4M15 7h4v6h-4l-2 4"></path></svg>BibTeX</a>
     </div>
 
-    <div class="hero-fig">
-      <img src="static/images/gap.jpg" alt="Viewpoint-based evaluation counts the episode as a success even though the toilet seat is neither visible nor reachable; grounding-based evaluation marks it as a failure.">
-      <p class="caption"><b>Figure 1.</b> Existing VLN evaluation rewards stopping <i>near</i> a target viewpoint, but object grounding requires a final viewpoint where the referred object is actually visible and localizable.</p>
-    </div>
+    <figure class="hero-fig">
+      <div class="frame-card">
+        <img src="static/images/gap.jpg" alt="Viewpoint-based evaluation counts the episode as a success even though the toilet seat is neither visible nor reachable; grounding-based evaluation marks it as a failure.">
+      </div>
+      <figcaption><strong>Figure 1.</strong> Existing VLN evaluation rewards stopping <em>near</em> a target viewpoint, but object grounding requires a final viewpoint where the referred object is actually visible and localizable.</figcaption>
+    </figure>
   </div>
-</header>
+</section>
+
+<!-- ======================= KEY NUMBERS ======================= -->
+<section class="keynums" aria-label="Key results">
+  <div class="wrap">
+    <div class="kn"><span class="eyebrow">The gap</span><b>34.7% → 6.3%</b><span>SR vs. ONS@0.1m for ETPNav-FT: most “successes” never reach the object</span></div>
+    <div class="kn"><span class="eyebrow">Plug-and-play</span><b>4 backbones</b><span>Graph-based, video-based, zero-shot and training-free VLN agents</span></div>
+    <div class="kn"><span class="eyebrow">Simulation</span><b>2.07× ONS</b><span>ETPNav-ZS ONS@0.1m 7.07% → 14.66%</span></div>
+    <div class="kn"><span class="eyebrow">Real robot</span><b>10% → 35%</b><span>ONS@0.5m on Hello Robot Stretch 3, 20 episodes</span></div>
+  </div>
+</section>
 
 <!-- ======================= ABSTRACT ======================= -->
-<section class="alt">
-  <div class="wrap narrow abstract">
-    <h2>Abstract</h2>
-    <div class="tldr"><b>TL;DR</b> — Stopping within 3 m of a waypoint is not the same as seeing the object. We measure this <i>Last-3-Meter Grounding Gap</i> and close part of it with REALM, a plug-and-play refinement module that works on top of any VLN agent.</div>
-    <p>Vision-and-Language Navigation (VLN) agents may satisfy conventional success criteria while still failing to establish reliable object-level grounding, because current evaluation protocols mainly reward stopping within a 3-meter radius and largely ignore the agent’s final orientation and target visibility. We formalize this limitation as the <strong>Last-3-Meter Grounding Gap</strong> and introduce three instance-centric metrics to quantify proximity precision, target visibility, and final-view grounding. To mitigate this gap, we propose <strong>REALM</strong> (Region-to-Entity Alignment for Last-3-Meter Navigation), a plug-and-play, architecture-agnostic refinement module that decouples fine-grained target approaching from long-horizon navigation. REALM uses a visibility-aware stopping strategy to reduce premature termination and improve final viewpoint alignment. We further construct <strong>REVERIE-AIM</strong>, which provides object-instance-level goals and 180K short-horizon training samples for final-stage target approaching. Evaluations across four diverse VLN backbones show that REALM consistently improves proximity precision and visual grounding success, suggesting its potential applicability.</p>
+<section class="sec">
+  <div class="wrap">
+    <div class="abstract-grid">
+      <div><span class="eyebrow" style="color:var(--gold-ink)">01 · Overview</span><h2>Abstract</h2></div>
+      <div>
+        <p class="lede">Stopping within 3&nbsp;m of a waypoint is not the same as seeing the object. We measure this <span class="hl">Last-3-Meter Grounding Gap</span> and close part of it with REALM, a plug-and-play refinement module that works on top of any VLN agent.</p>
+        <p>Vision-and-Language Navigation (VLN) agents may satisfy conventional success criteria while still failing to establish reliable object-level grounding, because current evaluation protocols mainly reward stopping within a 3-meter radius and largely ignore the agent’s final orientation and target visibility. We formalize this limitation as the <strong>Last-3-Meter Grounding Gap</strong> and introduce three instance-centric metrics to quantify proximity precision, target visibility, and final-view grounding. To mitigate this gap, we propose <strong>REALM</strong> (Region-to-Entity Alignment for Last-3-Meter Navigation), a plug-and-play, architecture-agnostic refinement module that decouples fine-grained target approaching from long-horizon navigation. REALM uses a visibility-aware stopping strategy to reduce premature termination and improve final viewpoint alignment. We further construct <strong>REVERIE-AIM</strong>, which provides object-instance-level goals and 180K short-horizon training samples for final-stage target approaching. Evaluations across four diverse VLN backbones show that REALM consistently improves proximity precision and visual grounding success, suggesting its potential applicability.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ======================= THE GAP ======================= -->
-<section>
+<section class="sec alt" id="gap">
   <div class="wrap">
-    <h2>The Last-3-Meter Grounding Gap</h2>
-    <div class="narrow">
-      <p>On REVERIE and REVERIE-CE, an episode counts as a success if the agent stops within 3&nbsp;m of a pre-annotated waypoint. That waypoint sits <i>near</i> the object, not at it, and the agent’s final heading is never checked. An agent can therefore “succeed” while facing a wall, with the referred object nowhere in view. Try it below.</p>
+    <div class="sec-head">
+      <div><span class="eyebrow">02 · Problem</span><h2>The Last-3-Meter Grounding Gap</h2></div>
+      <p>On REVERIE and REVERIE-CE, an episode counts as a success if the agent stops within 3&nbsp;m of a pre-annotated waypoint. That waypoint sits <i>near</i> the object, not at it, and the agent’s final heading is never checked. Drag the agent below to see where the two standards disagree.</p>
     </div>
+    <div>
     <div class="sim" id="sim">
       <div class="sim-head">
         <span class="sim-tag">Interactive</span>
@@ -379,95 +410,68 @@
         </div>
       </div>
     </div>
-    <p class="caption" style="text-align:left;max-width:none">Drag the sliders. Inside the red region the episode already counts as a success under the standard 3&nbsp;m rule, yet the toilet seat is often too far, too small, behind a wall, or behind the agent. A schematic re-creation of Figure 1: SR uses geodesic distance to the annotated endpoint; OracleGS requires the target to be in view, unoccluded, and ≥ 1% of the frame (area estimated from distance).</p>
-
-    <div class="gapstat">
-      <div class="stat"><div class="num">34.67%</div><div class="lbl">Success Rate (3&nbsp;m criterion)</div></div>
-      <div class="vs">vs.</div>
-      <div class="stat bad"><div class="num">6.32%</div><div class="lbl">ONS@0.1m (reached the object)</div></div>
+    <p class="sim-cap">Drag the sliders. Inside the red region the episode already counts as a success under the standard 3&nbsp;m rule, yet the toilet seat is often too far, too small, behind a wall, or behind the agent. A schematic re-creation of Figure 1: SR uses geodesic distance to the annotated endpoint; OracleGS requires the target to be in view, unoccluded, and ≥ 1% of the frame (area estimated from distance).</p>
     </div>
-    <p class="gapnote">ETPNav-FT on REVERIE-AIM val-unseen: more than 80% of its “successes” fail to actually reach the target instance.</p>
 
-    <h3 class="narrow" style="text-align:center;margin-top:40px">Three instance-centric metrics</h3>
     <div class="cards">
-      <div class="card">
-        <div class="k">ONS@τ</div>
-        <h4>Object Navigation Success</h4>
-        <p>Geodesic distance from the stop position to the navigable points around the <i>specific</i> target instance is at most τ. We report τ = 0.1&nbsp;m and 0.5&nbsp;m.</p>
-      </div>
-      <div class="card">
-        <div class="k">OracleGS</div>
-        <h4>Oracle Grounding Success</h4>
-        <p>The ground-truth box of the target is visible in the final camera frame and covers at least 1% of the image.</p>
-      </div>
-      <div class="card">
-        <div class="k">GS</div>
-        <h4>Grounding Success</h4>
-        <p>The detector’s predicted box at the final viewpoint matches the ground truth with IoU ≥ 0.5. Comparing GS with OracleGS separates navigation errors from detection errors.</p>
-      </div>
+      <div class="card"><span class="k">ONS@τ</span><h3>Object Navigation Success</h3><p>The agent stops within τ (0.1&nbsp;m or 0.5&nbsp;m, geodesic) of navigable points around the <i>specific</i> target instance.</p></div>
+      <div class="card"><span class="k">OracleGS</span><h3>Oracle Grounding Success</h3><p>The target is visible in the final camera frame and covers at least 1% of the image.</p></div>
+      <div class="card"><span class="k">GS</span><h3>Grounding Success</h3><p>The detector’s box at the final view matches the ground truth (IoU ≥ 0.5), separating navigation errors from detection errors.</p></div>
     </div>
   </div>
 </section>
 
 <!-- ======================= METHOD ======================= -->
-<section class="alt">
+<section class="sec" id="method">
   <div class="wrap">
-    <h2>Method: REALM</h2>
-    <div class="narrow">
-      <p>REALM is a decoupled refinement stage. Long-horizon navigation (path planning over tens of meters) and short-horizon target approach (precise visual alignment within a few meters) are different problems, so REALM takes over only after the upstream VLN policy issues <code>stop</code>. It uses only egocentric RGB and the original instruction, with no depth, maps, or changes to the upstream model.</p>
+    <div class="sec-head">
+      <div><span class="eyebrow">03 · Method</span><h2>REALM takes over where navigation stops</h2></div>
+      <p>Long-horizon navigation and short-horizon target approach are different problems. REALM is a decoupled refinement stage that runs only after the upstream policy issues <code>stop</code>, using egocentric RGB and the original instruction, with no depth, maps or changes to the upstream model.</p>
     </div>
-
-    <div class="stages">
-      <div class="stage" style="--c: var(--nav)">
-        <div class="n">Stage 1</div>
-        <h4>Navigation (any backbone)</h4>
-        <p>An upstream policy (graph-based, video-based, or zero-shot) follows the instruction and stops near the target region.</p>
-      </div>
-      <div class="stage" style="--c: var(--accent)">
-        <div class="n">Stage 2 · Ours</div>
-        <h4>Refinement</h4>
-        <p>UniNaVid-7B fine-tuned with LoRA predicts the next four low-level actions from the RGB video and instruction, trained with a visibility-aware stop penalty.</p>
-      </div>
-      <div class="stage" style="--c: var(--ground)">
-        <div class="n">Stage 3</div>
-        <h4>Grounding</h4>
-        <p>A BERT-QA extractor distils the instruction into a short target phrase (e.g. “flowers on the table”), which queries OWLv2 for the bounding box.</p>
-      </div>
+    <div class="flow">
+      <div class="stage"><span class="n">Stage 1 · any backbone</span><h3>Navigate</h3><p>A graph-based, video-based or zero-shot VLN policy follows the instruction and stops near the target region.</p></div>
+      <div class="arrow"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></div>
+      <div class="stage ours"><span class="n">Stage 2 · ours</span><h3>Refine</h3><p>UniNaVid-7B fine-tuned with LoRA predicts the next four low-level actions from the RGB video and instruction, repositioning the robot until the target is close and in view.</p></div>
+      <div class="arrow"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></div>
+      <div class="stage"><span class="n">Stage 3</span><h3>Ground</h3><p>BERT-QA extracts a short target phrase (“flowers on the table”) that queries OWLv2 for the final bounding box.</p></div>
     </div>
-
-    <div class="narrow">
-      <h3>Visibility-Aware Stop Penalty (VSP)</h3>
-      <p>Trained with imitation learning alone, the refinement policy tends to stop too early, often before the target has even come into view. Once it stops, the episode is over and there is no chance to recover.</p>
-      <p>VSP adds a training penalty that targets exactly this mistake. Whenever the model is inclined to <strong>stop while the target is still not visible</strong>, it is penalized, and the more confidently it wants to stop, the larger the penalty. When the target <em>is</em> visible, stopping is not penalized at all. The agent therefore keeps searching and adjusting its viewpoint until it can actually see the object, and is still free to stop as soon as it does.</p>
+    <div class="vsp">
+      <h3>Visibility-Aware Stop Penalty <span>(VSP)</span></h3>
+      <div>
+        <p>Trained with imitation learning alone, the refinement policy tends to stop too early, often before the target has even come into view. Once it stops, the episode is over and there is no chance to recover.</p>
+        <p>VSP adds a training penalty that targets exactly this mistake. Whenever the model is inclined to <strong>stop while the target is still not visible</strong>, it is penalized, and the more confidently it wants to stop, the larger the penalty. When the target <em>is</em> visible, stopping is not penalized at all. The agent therefore keeps searching and adjusting its viewpoint until it can actually see the object, and is still free to stop as soon as it does.</p>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- ======================= DATASET ======================= -->
-<section>
-  <div class="wrap narrow">
-    <h2>REVERIE-AIM Dataset</h2>
-    <p>We remap REVERIE into the Habitat continuous simulator and replace region-level waypoints with object-instance goals from ObjectNav annotations. From the training split we further sample a dense short-horizon set for learning the final approach: starting points are perturbed around the target (truncated Gaussian, σ = 1.5&nbsp;m) with random initial headings.</p>
-    <div class="nums">
-      <div><b>3,691</b><span>training episodes<br>53 scenes · 90 categories</span></div>
-      <div><b>1,344</b><span>val-unseen episodes<br>10 scenes · 48 categories</span></div>
-      <div><b>180K</b><span>short-horizon<br>approach samples</span></div>
-      <div><b>0.34 m</b><span>avg. endpoint-to-target distance<br>(REVERIE-CE: 1.32 m)</span></div>
+<section class="sec dark" id="dataset">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow">04 · Data</span><h2>REVERIE-AIM</h2></div>
+      <p>REVERIE remapped into the Habitat continuous simulator, with region-level waypoints replaced by object-instance goals, plus a dense short-horizon split for learning the final approach. The first embodied navigation dataset to combine continuous space, language goals, instance-level targets and object-proximity endpoints.</p>
     </div>
-    <p style="margin-top:18px">REVERIE-AIM is the first embodied navigation dataset that combines continuous space, language goals, instance-level targets, and object-proximity endpoints.</p>
+    <div class="dnums">
+      <div><b>3,691</b><span>training episodes · 53 scenes · 90 categories</span></div>
+      <div><b>1,344</b><span>val-unseen episodes · 10 scenes · 48 categories</span></div>
+      <div><b class="gold">180K</b><span>short-horizon approach samples</span></div>
+      <div><b>0.34 m</b><span>avg. endpoint-to-target distance (REVERIE-CE: 1.32 m)</span></div>
+    </div>
+    <a class="btn gold" href="https://github.com/sxyxs/REVERIE-AIM/tree/main/data" target="_blank" rel="noopener">Download REVERIE-AIM
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
   </div>
 </section>
 
 <!-- ======================= RESULTS ======================= -->
-<section class="alt" id="results">
+<section class="sec" id="results">
   <div class="wrap">
-    <h2>Results in Simulation</h2>
-    <p class="narrow" style="text-align:center">REALM plugged into four different VLN backbones on REVERIE-AIM val-unseen. Pick a backbone to compare the upstream stopping point (no refinement) with REALM.</p>
-
+    <div class="sec-head">
+      <div><span class="eyebrow">05 · Results</span><h2>Gains on every backbone</h2></div>
+      <p>REVERIE-AIM val-unseen. Pick a backbone to compare the upstream policy’s own stopping point with the same episodes after REALM refinement.</p>
+    </div>
     <div class="tabs" role="tablist" id="tabs"></div>
     <div class="bars" id="bars"></div>
-    <div class="legend"><span><i style="background:#b7bcc8"></i>Upstream stop (no move)</span><span><i style="background:var(--accent)"></i>+ REALM (Ours, Full)</span></div>
-
     <details>
       <summary>Full comparison with all move policies (Table 1)</summary>
       <div class="tablewrap">
@@ -480,42 +484,38 @@
 </section>
 
 <!-- ======================= REAL WORLD ======================= -->
-<section>
+<section class="sec alt" id="real">
   <div class="wrap">
-    <h2>Real-World Experiments</h2>
-    <p class="narrow" style="text-align:center">20 episodes on a Hello Robot Stretch 3 (RealSense D435if RGB-D, inference on an RTX 4090) across a robot lab, a school lobby, and a foyer.</p>
-
-    <div class="rw-table">
-      <table>
-        <tr><th>Method</th><th>ONS@0.5m ↑</th><th>GS ↑</th><th>OracleGS ↑</th></tr>
-        <tr><td>UniNaVid</td><td>10.00</td><td>5.00</td><td>15.00</td></tr>
-        <tr><td><b>UniNaVid + REALM</b></td><td class="up">35.00</td><td class="up">20.00</td><td class="up">25.00</td></tr>
-      </table>
+    <div class="sec-head">
+      <div><span class="eyebrow">06 · Real world</span><h2>On a real robot</h2></div>
+      <p>20 episodes on a Hello Robot Stretch 3 (RealSense D435if RGB-D, inference on an RTX 4090) across a robot lab, a school lobby and a foyer. UniNaVid alone vs. UniNaVid + REALM.</p>
     </div>
-
+    <div class="rwnums">
+      <div><span>ONS@0.5m</span><b><small>10% →</small> 35%</b></div>
+      <div><span>GS</span><b><small>5% →</small> 20%</b></div>
+      <div><span>OracleGS</span><b><small>15% →</small> 25%</b></div>
+    </div>
     <div class="vgrid">
-      <div class="vcard">
+      <figure>
         <video controls muted playsinline preload="metadata" poster="static/images/poster_stretch.jpg">
           <source src="static/videos/stretch.mp4" type="video/mp4">
         </video>
-        <p class="caption"><b>Stretch 3.</b> “Turn left and grab the red hat on the chair next to the entrance.” UniNaVid stops near the target but the hat is not in view; REALM searches around and approaches until it is grounded. (2× speed)</p>
-      </div>
-      <div class="vcard">
+        <figcaption><strong>Stretch 3 · “Turn left and grab the red hat on the chair next to the entrance.”</strong> UniNaVid stops near the target with the hat out of view; REALM searches and approaches until it is grounded. (2× speed)</figcaption>
+      </figure>
+      <figure>
         <video controls muted playsinline preload="metadata" poster="static/images/poster_humanoid.jpg">
           <source src="static/videos/humanoid.mp4" type="video/mp4">
         </video>
-        <p class="caption"><b>Humanoid.</b> “Go straight forward and grab the red box on the chair.” Demonstrates the navigation behaviour on a second embodiment. (1× speed)</p>
-      </div>
+        <figcaption><strong>Humanoid · “Go straight forward and grab the red box on the chair.”</strong> The navigation behaviour on a second embodiment. (1× speed)</figcaption>
+      </figure>
     </div>
   </div>
 </section>
 
 <!-- ======================= VIDEO ======================= -->
-<section class="alt" id="video">
+<section class="sec" id="video">
   <div class="wrap narrow">
-    <h2>Video</h2>
-    <!-- Option: replace with a YouTube embed once uploaded:
-         <iframe width="100%" style="aspect-ratio:16/9;border:0;border-radius:12px" src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe> -->
+    <h2 style="text-align:center">Supplementary video</h2>
     <video class="video-main" controls playsinline preload="metadata" poster="static/images/poster_main.jpg">
       <source src="static/videos/realm_supp.mp4" type="video/mp4">
       Your browser does not support the video tag.
@@ -524,25 +524,26 @@
 </section>
 
 <!-- ======================= BIBTEX ======================= -->
-<section id="bibtex">
-  <div class="wrap narrow">
-    <h2>BibTeX</h2>
-    <div class="bib">
-      <button class="copy" id="copybtn">Copy</button>
+<section class="sec" id="bibtex" style="border-top:1px solid var(--line);padding-top:72px">
+  <div class="wrap narrow" style="gap:18px">
+    <div class="bibhead">
+      <h2>Citation</h2>
+      <button class="btn" id="copybtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h8"></path></svg><span id="copylabel">Copy BibTeX</span></button>
+    </div>
 <pre id="bibtext">@inproceedings{shi2026realm,
   title     = {From Region Arrival to Instance-Level Grounding in Vision-and-Language Navigation},
   author    = {Shi, Xiangyu and Yang, Ruoxi and Tao, Wei and Zhang, Jiwen and Qiao, Yanyuan and Wu, Qi},
   booktitle = {Conference on Robot Learning (CoRL)},
   year      = {2026}
 }</pre>
-    </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    We thank Xinyu Yan for sharing helpful ideas during the rebuttal process.<br>
-    Page structure inspired by <a href="https://nerfies.github.io/">Nerfies</a> (CC BY-SA 4.0).
+    <span>We thank Xinyu Yan for sharing helpful ideas during the rebuttal process.</span>
+    <span>Page structure inspired by <a href="https://nerfies.github.io/">Nerfies</a> (CC BY-SA 4.0).</span>
   </div>
 </footer>
 
@@ -573,10 +574,9 @@
     [...tabs.children].forEach(t => t.setAttribute("aria-selected", t.textContent === name));
     bars.innerHTML = METRICS.map((m, i) => {
       const b = base[i + 1], o = ours[i + 1], diff = (o - b).toFixed(2);
-      return `<div class="metric"><div class="mname">${m} ↑</div>
+      return `<div class="metric"><div class="mhead"><span>${m}</span><span class="delta">${diff >= 0 ? "+" : ""}${diff}</span></div>
         <div class="row"><span class="who">No move</span><div class="track"><div class="fill base" style="width:${b / MAX[i] * 100}%"></div></div><span class="v">${b.toFixed(2)}</span></div>
-        <div class="row"><span class="who">REALM</span><div class="track"><div class="fill ours" style="width:${o / MAX[i] * 100}%"></div></div><span class="v">${o.toFixed(2)}</span></div>
-        <div class="delta">${diff >= 0 ? "+" : ""}${diff} pts</div></div>`;
+        <div class="row us"><span class="who">REALM</span><div class="track"><div class="fill ours" style="width:${o / MAX[i] * 100}%"></div></div><span class="v">${o.toFixed(2)}</span></div></div>`;
     }).join("");
     meta.textContent = `${name} upstream metrics: ${d.meta}`;
     table.innerHTML = `<tr><th>Move policy</th>${METRICS.map(m => `<th>${m} ↑</th>`).join("")}</tr>` +
@@ -590,12 +590,13 @@
   });
   render("ETPNav-FT");
 
-  document.getElementById("copybtn").onclick = async (e) => {
+  document.getElementById("copybtn").onclick = async () => {
+    const lbl = document.getElementById("copylabel");
     try {
       await navigator.clipboard.writeText(document.getElementById("bibtext").textContent);
-      e.target.textContent = "Copied!";
-    } catch { e.target.textContent = "Select & copy"; }
-    setTimeout(() => e.target.textContent = "Copy", 1600);
+      lbl.textContent = "Copied!";
+    } catch { lbl.textContent = "Select & copy"; }
+    setTimeout(() => lbl.textContent = "Copy BibTeX", 1600);
   };
 
   // ================= Interactive Last-3-Meter Grounding Gap =================
