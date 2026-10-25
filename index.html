@@ -89,6 +89,7 @@
     .hero-fig { margin: 28px 0 0; width: 100%; max-width: 1080px; }
     .hero-fig .frame-card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: 0 20px 50px rgba(15,27,45,.08); }
     .hero-fig img { width: 100%; border-radius: 8px; }
+    .hero-fig .sim { text-align: left; }
     .hero-fig figcaption { margin: 14px auto 0; font-size: 15px; color: var(--ink-2); max-width: 820px; }
     .hero-fig figcaption strong { color: var(--ink); }
 
@@ -220,9 +221,9 @@
     .lg.fov { background: rgba(42,90,168,.25); }
 
     .cam-label { font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
-    .frame { position: relative; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden;
-      background: linear-gradient(#dfe3ea 0 52%, #c9ced8 52% 100%); border: 1px solid var(--line); }
-    .tbox { position: absolute; border: 2px solid #e2b100; background: rgba(255,214,0,.18); border-radius: 3px; transform: translate(-50%, -50%); top: 58%; transition: left .08s linear, width .08s linear, height .08s linear; }
+    .frame { position: relative; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; background: #dfe3ea; border: 1px solid var(--line); }
+    .frame svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .tbox { position: absolute; box-sizing: border-box; border: 2px solid #e2b100; background: rgba(255,214,0,.14); border-radius: 3px; transition: left .08s linear, top .08s linear, width .08s linear, height .08s linear; }
     .tbox span { position: absolute; top: -18px; left: -2px; font-size: 10.5px; font-weight: 600; background: #e2b100; color: #fff; padding: 0 4px; border-radius: 2px; white-space: nowrap; }
     .camnote { position: absolute; inset: auto 0 0 0; padding: 6px 8px; font-size: 12.5px; color: #fff; background: rgba(20,23,31,.62); }
     .camnote:empty { display: none; }
@@ -251,7 +252,6 @@
       .sim-body { grid-template-columns: 1fr; }
       .sim-ctrl { grid-template-columns: 1fr; }
       .sim { padding: 14px; }
-      .frame { aspect-ratio: 16 / 9; }
       .sim-body { gap: 12px; }
     }
 
@@ -328,10 +328,51 @@
     </div>
 
     <figure class="hero-fig">
-      <div class="frame-card">
-        <img src="static/images/gap.jpg" alt="Viewpoint-based evaluation counts the episode as a success even though the toilet seat is neither visible nor reachable; grounding-based evaluation marks it as a failure.">
+  <div class="sim" id="sim">
+    <div class="sim-head">
+      <span class="sim-tag">Interactive</span>
+      <span class="sim-instr"><b>Instruction:</b> “Go to the living room and turn on the lamp next to the sofa.”</span>
+    </div>
+    <div class="sim-body">
+      <div class="sim-map">
+        <svg id="map" viewBox="4.0 0.15 9.0 7.7" role="img" aria-label="Top-down floor plan with the agent, the annotated endpoint, the 3 m success region and the target lamp"></svg>
+        <div class="sim-legend">
+          <span><i class="lg sr"></i>SR region: ≤ 3 m (geodesic) from annotated endpoint</span>
+          <span><i class="lg ons"></i>ONS@0.5m region around the target</span>
+          <span><i class="lg fov"></i>Agent field of view</span>
+        </div>
       </div>
-      <figcaption><strong>Figure 1.</strong> Existing VLN evaluation rewards stopping <em>near</em> a target viewpoint, but object grounding requires a final viewpoint where the referred object is actually visible and localizable.</figcaption>
+      <div class="sim-side">
+        <div class="cam">
+          <div class="cam-label">Agent camera (90° FOV, rendered from the floor plan)</div>
+          <div class="frame" id="frame">
+            <svg id="camsvg" viewBox="0 0 400 300" aria-hidden="true"></svg>
+            <div class="tbox" id="tbox"><span>lamp</span></div>
+            <div class="camnote" id="camnote"></div>
+          </div>
+        </div>
+        <div class="verdict" id="verdict"></div>
+        <div class="checks">
+          <div class="grp">Standard VLN criterion</div>
+          <div class="chk" id="c-sr"></div>
+          <div class="grp">Ours: instance-level criteria</div>
+          <div class="chk" id="c-ons"></div>
+          <div class="chk" id="c-ogs"></div>
+        </div>
+      </div>
+    </div>
+    <div class="sim-ctrl">
+      <label><span>Where the agent stops along its trajectory</span>
+        <input type="range" id="pos" min="0" max="1000" value="0"></label>
+      <label><span>Turn in place <b id="yawv">0°</b></span>
+        <input type="range" id="yaw" min="-180" max="180" value="0"></label>
+      <div class="presets">
+        <button type="button" id="pUp">Typical VLN stop</button>
+        <button type="button" id="pRealm" class="primary">▶ Run REALM refinement</button>
+      </div>
+    </div>
+  </div>
+      <figcaption><strong>Figure 1 (interactive).</strong> Existing VLN evaluation rewards stopping <em>near</em> a target viewpoint, but object grounding requires a final viewpoint where the referred object is actually visible and localizable. Drag the sliders. Inside the red region the episode already counts as a success under the standard 3&nbsp;m rule, yet the lamp is often too far, too small, behind a wall, or behind the agent. A schematic episode; the camera view is rendered from the same floor plan. SR uses geodesic distance to the annotated endpoint; OracleGS requires the target to be in view, unoccluded, and ≥ 1% of the frame (the yellow box's share of the image).</figcaption>
     </figure>
   </div>
 </section>
@@ -364,53 +405,7 @@
   <div class="wrap">
     <div class="sec-head">
       <div><span class="eyebrow">02 · Problem</span><h2>The Last-3-Meter Grounding Gap</h2></div>
-      <p>On REVERIE and REVERIE-CE, an episode counts as a success if the agent stops within 3&nbsp;m of a pre-annotated waypoint. That waypoint sits <i>near</i> the object, not at it, and the agent’s final heading is never checked. Drag the agent below to see where the two standards disagree.</p>
-    </div>
-    <div>
-    <div class="sim" id="sim">
-      <div class="sim-head">
-        <span class="sim-tag">Interactive</span>
-        <span class="sim-instr"><b>Instruction:</b> “Go to the bathroom and clean the toilet seat.”</span>
-      </div>
-      <div class="sim-body">
-        <div class="sim-map">
-          <svg id="map" viewBox="4.0 0.15 9.0 7.7" role="img" aria-label="Top-down floor plan with the agent, the annotated endpoint, the 3 m success region and the target toilet"></svg>
-          <div class="sim-legend">
-            <span><i class="lg sr"></i>SR region: ≤ 3 m (geodesic) from annotated endpoint</span>
-            <span><i class="lg ons"></i>ONS@0.5m region around the target</span>
-            <span><i class="lg fov"></i>Agent field of view</span>
-          </div>
-        </div>
-        <div class="sim-side">
-          <div class="cam">
-            <div class="cam-label">Agent camera (90° FOV)</div>
-            <div class="frame" id="frame">
-              <div class="tbox" id="tbox"><span>toilet</span></div>
-              <div class="camnote" id="camnote"></div>
-            </div>
-          </div>
-          <div class="verdict" id="verdict"></div>
-          <div class="checks">
-            <div class="grp">Standard VLN criterion</div>
-            <div class="chk" id="c-sr"></div>
-            <div class="grp">Ours: instance-level criteria</div>
-            <div class="chk" id="c-ons"></div>
-            <div class="chk" id="c-ogs"></div>
-          </div>
-        </div>
-      </div>
-      <div class="sim-ctrl">
-        <label><span>Where the agent stops along its trajectory</span>
-          <input type="range" id="pos" min="0" max="1000" value="0"></label>
-        <label><span>Turn in place <b id="yawv">0°</b></span>
-          <input type="range" id="yaw" min="-180" max="180" value="0"></label>
-        <div class="presets">
-          <button type="button" id="pUp">Typical VLN stop</button>
-          <button type="button" id="pRealm" class="primary">▶ Run REALM refinement</button>
-        </div>
-      </div>
-    </div>
-    <p class="sim-cap">Drag the sliders. Inside the red region the episode already counts as a success under the standard 3&nbsp;m rule, yet the toilet seat is often too far, too small, behind a wall, or behind the agent. A schematic re-creation of Figure 1: SR uses geodesic distance to the annotated endpoint; OracleGS requires the target to be in view, unoccluded, and ≥ 1% of the frame (area estimated from distance).</p>
+      <p>On REVERIE and REVERIE-CE, an episode counts as a success if the agent stops within 3&nbsp;m of a pre-annotated waypoint. That waypoint sits <i>near</i> the object, not at it, and the agent’s final heading is never checked. Drag the agent in Figure&nbsp;1 to see where the two standards disagree.</p>
     </div>
 
     <div class="cards">
@@ -603,46 +598,65 @@
   (function () {
     const NS = "http://www.w3.org/2000/svg";
     const svg = document.getElementById("map");
-    if (!svg) return;
+    const cam = document.getElementById("camsvg");
+    if (!svg || !cam) return;
     const el = (tag, attrs, parent = svg) => {
       const e = document.createElementNS(NS, tag);
       for (const k in attrs) e.setAttribute(k, attrs[k]);
       parent.appendChild(e); return e;
     };
+    const mix = (c1, c2, t) => { // blend two 6-digit hex colours
+      const a = c1.match(/\w\w/g).map(h => parseInt(h, 16)), b = c2.match(/\w\w/g).map(h => parseInt(h, 16));
+      return "#" + a.map((v, i) => Math.round(v + (b[i] - v) * t).toString(16).padStart(2, "0")).join("");
+    };
 
-    // ---- World (meters; x right, y down) ----
-    const BED = { x0: 0.4, y0: 0.4, x1: 7.5, y1: 5.0 };
-    const BATH = { x0: 7.5, y0: 0.4, x1: 12.8, y1: 5.0 };
+    // ---- World (meters; x right, y down on the map, z up) ----
+    const KITCHEN = { x0: 0.4, y0: 0.4, x1: 7.5, y1: 5.0 };
+    const LIVING = { x0: 7.5, y0: 0.4, x1: 12.8, y1: 5.0 };
     const HALL = { x0: 0.4, y0: 5.0, x1: 12.8, y1: 7.6 };
-    const BED_DOOR = [3.5, 5.0], BATH_DOOR = [9.1, 5.0];
+    const KITCHEN_DOOR = [3.5, 5.0], LIVING_DOOR = [9.1, 5.0];
+    const WALL_H = 2.5, DOOR_H = 2.05;
     const WALLS = [
       [0.4, 0.4, 12.8, 0.4], [0.4, 0.4, 0.4, 7.6], [0.4, 7.6, 12.8, 7.6], [12.8, 0.4, 12.8, 7.6],
       [7.5, 0.4, 7.5, 5.0],
       [0.4, 5.0, 3.0, 5.0], [4.0, 5.0, 8.6, 5.0], [9.6, 5.0, 12.8, 5.0],
     ];
-    const TUB = { x0: 7.65, y0: 0.55, x1: 8.95, y1: 2.6 };
-    const SINK = { x0: 9.9, y0: 0.55, x1: 11.0, y1: 1.05 };
-    const TOILET = { x0: 11.95, y0: 0.6, x1: 12.65, y1: 1.3 };
-    const TGT = [(TOILET.x0 + TOILET.x1) / 2, (TOILET.y0 + TOILET.y1) / 2];
-    const TGT_SIZE = 0.6;                                     // m, for apparent-size estimate
-    const APPROACH = [[11.6, 0.95], [11.6, 1.45], [12.3, 1.65]]; // navigable points around the target
-    const P_EP = [10.9, 2.4];                                 // REVERIE annotated endpoint
+    const LINTELS = [[3.0, 5.0, 4.0, 5.0], [8.6, 5.0, 9.6, 5.0]]; // wall above each doorway
+
+    // Furniture as axis-aligned boxes (the camera view is rendered from these)
+    const box = (x0, y0, x1, y1, z0, z1, fill) => ({ x0, y0, x1, y1, z0, z1, fill, side: mix(fill, "#000000", 0.18), top: mix(fill, "#ffffff", 0.22) });
+    const SOFA = [box(9.6, 0.75, 11.6, 1.45, 0, 0.45, "#7d8fae"), box(9.6, 0.55, 11.6, 0.8, 0, 0.9, "#7385a4"),
+      box(9.6, 0.55, 9.85, 1.45, 0, 0.65, "#7385a4"), box(11.35, 0.55, 11.6, 1.45, 0, 0.65, "#7385a4")];
+    const SIDE_TABLE = [box(11.75, 0.6, 12.35, 1.2, 0.52, 0.58, "#b98b5a"), box(11.98, 0.83, 12.12, 0.97, 0, 0.52, "#9a7247")];
+    const COFFEE = [box(9.8, 1.85, 10.8, 2.35, 0.4, 0.46, "#b98b5a")]
+      .concat([[9.82, 1.87], [10.73, 1.87], [9.82, 2.28], [10.73, 2.28]].map(([x, y]) => box(x, y, x + 0.05, y + 0.05, 0, 0.4, "#9a7247")));
+    const SHELF = box(7.65, 0.6, 8.05, 2.4, 0, 1.9, "#9c7550");
+    const COUNTER = box(0.6, 0.55, 3.8, 1.15, 0, 0.9, "#cfd4dc");
+    const BOXES = [...SOFA, ...SIDE_TABLE, ...COFFEE, SHELF, COUNTER];
+    const RUG = { x0: 9.5, y0: 1.6, x1: 11.3, y1: 2.8, fill: "#c9a48f" };
+    const FLOORS = [{ r: KITCHEN, fill: "#e7e3da" }, { r: LIVING, fill: "#d8ccbb" }, { r: HALL, fill: "#dcd9d2" }];
+
+    const LAMP = { x: 12.05, y: 0.9, z: 0.58 };   // base of the lamp, standing on the side table
+    const LAMP_W = 0.34, LAMP_H = 0.62;           // shade width and base-to-top height (m)
+    const TGT = [LAMP.x, LAMP.y];
+    const APPROACH = [[11.55, 1.6], [12.05, 1.5], [12.55, 1.3]]; // navigable points around the target
+    const P_EP = [10.9, 2.4];                                   // REVERIE annotated endpoint
     const PATH = [[4.7, 6.3], [9.1, 6.3], [9.1, 4.2], [10.4, 2.9], [11.45, 1.75]];
-    const HFOV = 90, TAN_H = Math.tan(HFOV / 2 * Math.PI / 180), TAN_V = Math.tan(30 * Math.PI / 180);
+    const HFOV = 90;
 
     const inR = (p, r) => p[0] >= r.x0 && p[0] <= r.x1 && p[1] >= r.y0 && p[1] <= r.y1;
     const d2 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
-    const room = p => inR(p, BATH) && p[1] < 5 ? "bath" : (p[1] >= 5 ? "hall" : "bed");
+    const room = p => inR(p, LIVING) && p[1] < 5 ? "living" : (p[1] >= 5 ? "hall" : "kitchen");
     // Geodesic distance through doorways (rooms are convex, so straight lines inside a room are free)
     function geo(a, b) {
       const ra = room(a), rb = room(b);
       if (ra === rb) return d2(a, b);
-      const door = r => (r === "bath" ? BATH_DOOR : BED_DOOR);
+      const door = r => (r === "living" ? LIVING_DOOR : KITCHEN_DOOR);
       if (ra === "hall") return d2(a, door(rb)) + d2(door(rb), b);
       if (rb === "hall") return d2(a, door(ra)) + d2(door(ra), b);
       return d2(a, door(ra)) + d2(door(ra), door(rb)) + d2(door(rb), b);
     }
-    const blocked = p => inR(p, TUB) || inR(p, SINK) || inR(p, TOILET);
+    const blocked = p => BOXES.some(b => inR(p, b));
 
     function segHit(p, q, w) { // returns t along p->q of intersection with wall segment w, or null
       const [x1, y1, x2, y2] = w, rx = q[0] - p[0], ry = q[1] - p[1], sx = x2 - x1, sy = y2 - y1;
@@ -652,11 +666,11 @@
     }
     const occluded = (p, q) => WALLS.some(w => segHit(p, q, w) !== null);
 
-    // ---- Static drawing ----
+    // ---- Static map drawing ----
     const rect = (r, a) => el("rect", Object.assign({ x: r.x0, y: r.y0, width: r.x1 - r.x0, height: r.y1 - r.y0 }, a));
-    rect(BED, { fill: "#f4efe6" }); rect(BATH, { fill: "#eaf1f6" }); rect(HALL, { fill: "#f7f7f5" });
+    rect(KITCHEN, { fill: "#f4efe6" }); rect(LIVING, { fill: "#eaf1f6" }); rect(HALL, { fill: "#f7f7f5" });
 
-    // Shaded regions, built from 0.1 m cells and merged into horizontal runs
+    // Shaded regions, built from 0.05 m cells and merged into horizontal runs
     function shade(test, fill) {
       const g = el("g", { fill }); const c = 0.05;
       for (let y = 0.4; y < 7.6; y += c) {
@@ -673,21 +687,23 @@
     shade(p => !blocked(p) && geo(p, P_EP) <= 3, "rgba(201,55,44,.16)");
     shade(p => !blocked(p) && Math.min(...APPROACH.map(q => geo(p, q))) <= 0.5, "rgba(47,107,63,.32)");
 
-    // Furniture
-    rect(TUB, { fill: "#fff", stroke: "#b8c2cf", "stroke-width": 0.04, rx: 0.25 });
-    rect({ x0: 7.8, y0: 0.7, x1: 8.8, y1: 2.45 }, { fill: "#e3ecf3", rx: 0.2 });
-    rect(SINK, { fill: "#fff", stroke: "#b8c2cf", "stroke-width": 0.04, rx: 0.12 });
-    rect(TOILET, { fill: "#fff", stroke: "#b8c2cf", "stroke-width": 0.04, rx: 0.12 });
-    el("ellipse", { cx: TGT[0] - 0.05, cy: TGT[1] + 0.05, rx: 0.22, ry: 0.27, fill: "#eef2f6", stroke: "#b8c2cf", "stroke-width": 0.03 });
-        rect({ x0: TOILET.x0 - 0.12, y0: TOILET.y0 - 0.12, x1: TOILET.x1 + 0.06, y1: TOILET.y1 + 0.12 }, { fill: "none", stroke: "#e2b100", "stroke-width": 0.07, rx: 0.06 });
+    // Furniture (top-down)
+    rect(RUG, { fill: "#e7d6c8", rx: 0.08 });
+    rect(SHELF, { fill: "#d9c3a6", stroke: "#b89a78", "stroke-width": 0.04, rx: 0.04 });
+    rect(COUNTER, { fill: "#e8ebef", stroke: "#b8c2cf", "stroke-width": 0.04, rx: 0.04 });
+    SOFA.forEach(b => rect(b, { fill: "#c9d2e0", stroke: "#9aa7bb", "stroke-width": 0.04, rx: 0.1 }));
+    rect(COFFEE[0], { fill: "#e3cfb4", stroke: "#c4a781", "stroke-width": 0.04, rx: 0.08 });
+    rect(SIDE_TABLE[0], { fill: "#e3cfb4", stroke: "#c4a781", "stroke-width": 0.04, rx: 0.06 });
+    el("circle", { cx: LAMP.x, cy: LAMP.y, r: 0.17, fill: "#f5dc9c", stroke: "#c9a65a", "stroke-width": 0.04 });
+    rect({ x0: 11.65, y0: 0.5, x1: 12.45, y1: 1.3 }, { fill: "none", stroke: "#e2b100", "stroke-width": 0.07, rx: 0.06 });
 
     // Walls
     const wg = el("g", { stroke: "#4b5262", "stroke-width": 0.14, "stroke-linecap": "square" });
     WALLS.forEach(w => el("line", { x1: w[0], y1: w[1], x2: w[2], y2: w[3] }, wg));
 
     const label = (x, y, t, a = {}) => { const e = el("text", Object.assign({ x, y, "font-size": 0.3, fill: "#8a90a0", "font-family": "Inter, sans-serif", "font-weight": 600 }, a)); e.textContent = t; return e; };
-    label(4.3, 4.75, "BEDROOM"); label(10.65, 4.75, "BATHROOM"); label(4.3, 7.35, "HALLWAY");
-    label(12.0, 2.2, "target", { fill: "#b38b00", "font-size": 0.24 });
+    label(4.3, 4.75, "KITCHEN"); label(10.1, 4.75, "LIVING ROOM"); label(4.3, 7.35, "HALLWAY");
+    label(11.78, 1.55, "target", { fill: "#b38b00", "font-size": 0.22 });
 
     // Trajectory
     el("polyline", { points: PATH.map(p => p.join(",")).join(" "), fill: "none", stroke: "#2a5aa8", "stroke-width": 0.05, "stroke-dasharray": "0.12 0.12", opacity: 0.7 });
@@ -711,14 +727,25 @@
     // ---- Trajectory parametrisation ----
     const segLen = PATH.slice(1).map((p, i) => d2(PATH[i], p));
     const total = segLen.reduce((a, b) => a + b, 0);
+    const cumLen = [0]; segLen.forEach(l => cumLen.push(cumLen[cumLen.length - 1] + l));
+    const segHead = PATH.slice(1).map((p, i) => Math.atan2(p[1] - PATH[i][1], p[0] - PATH[i][0]));
+    const wrapA = a => Math.atan2(Math.sin(a), Math.cos(a));
+    const BLEND = 0.5; // m before/after each corner over which the heading turns smoothly
+    function headingAt(s, i) { // heading of segment i, eased through the corners at its ends
+      let h = segHead[i];
+      for (let k = 1; k < PATH.length - 1; k++) {
+        const b = Math.min(BLEND, segLen[k - 1] / 2, segLen[k] / 2), d = s - cumLen[k];
+        if (Math.abs(d) < b) { const t = (d / b + 1) / 2, e = t * t * (3 - 2 * t); h = segHead[k - 1] + wrapA(segHead[k] - segHead[k - 1]) * e; break; }
+      }
+      return h;
+    }
     function along(s) {
       s = Math.max(0, Math.min(total, s));
       for (let i = 0; i < segLen.length; i++) {
-        if (s <= segLen[i] || i === segLen.length - 1) {
-          const t = Math.min(1, s / segLen[i]), a = PATH[i], b = PATH[i + 1];
-          return { p: [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t], h: Math.atan2(b[1] - a[1], b[0] - a[0]) };
+        if (s <= cumLen[i + 1] || i === segLen.length - 1) {
+          const t = Math.min(1, (s - cumLen[i]) / segLen[i]), a = PATH[i], b = PATH[i + 1];
+          return { p: [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t], h: headingAt(s, i) };
         }
-        s -= segLen[i];
       }
     }
     function arcAt(pt) { // arc length of the projection of pt onto the path
@@ -733,13 +760,89 @@
       return best.s;
     }
 
+    // ---- First-person renderer: pinhole camera, 90 deg HFOV, 4:3 frame, painter's algorithm ----
+    const FW = 400, FH = 300, FX = FW / 2 / Math.tan(HFOV / 2 * Math.PI / 180), CAM_H = 1.2, NEAR = 0.05;
+    const FOG = "#eef1f6";
+    let view = { p: PATH[0], h: 0 };
+    const toCam = (x, y, z) => { // world -> [depth, right, up]
+      const dx = x - view.p[0], dy = y - view.p[1], c = Math.cos(view.h), s = Math.sin(view.h);
+      return [dx * c + dy * s, -dx * s + dy * c, z - CAM_H];
+    };
+    const project = q => [FW / 2 + FX * q[1] / q[0], FH / 2 - FX * q[2] / q[0]];
+    const PLANES = [q => q[0] - NEAR, q => 1.08 * q[0] - q[1], q => 1.08 * q[0] + q[1]]; // near plane + side planes
+    function clip(poly) { // Sutherland-Hodgman in camera space
+      for (const f of PLANES) {
+        const out = [];
+        for (let i = 0; i < poly.length; i++) {
+          const a = poly[i], b = poly[(i + 1) % poly.length], da = f(a), db = f(b);
+          if (da >= 0) out.push(a);
+          if ((da >= 0) !== (db >= 0)) { const t = da / (da - db); out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]); }
+        }
+        poly = out; if (poly.length < 3) return null;
+      }
+      return poly;
+    }
+    const quad = (pts, fill) => ({ pts, fill });
+    const rectPts = (r, z) => [[r.x0, r.y0, z], [r.x1, r.y0, z], [r.x1, r.y1, z], [r.x0, r.y1, z]];
+    const STATIC = [];
+    WALLS.forEach(([x1, y1, x2, y2]) => { // slice walls into <= 0.5 m slabs so depth sorting stays local
+      const n = Math.max(1, Math.ceil(Math.hypot(x2 - x1, y2 - y1) / 0.5)), fill = y1 === y2 ? "#dde2ea" : "#cdd3dd";
+      for (let i = 0; i < n; i++) {
+        const ax = x1 + (x2 - x1) * i / n, ay = y1 + (y2 - y1) * i / n, bx = x1 + (x2 - x1) * (i + 1) / n, by = y1 + (y2 - y1) * (i + 1) / n;
+        STATIC.push(quad([[ax, ay, 0], [bx, by, 0], [bx, by, WALL_H], [ax, ay, WALL_H]], fill));
+      }
+    });
+    LINTELS.forEach(([x1, y1, x2, y2]) => STATIC.push(quad([[x1, y1, DOOR_H], [x2, y2, DOOR_H], [x2, y2, WALL_H], [x1, y1, WALL_H]], "#dde2ea")));
+    function boxFaces(b) { // only the faces that can face the camera
+      const F = [], px = view.p[0], py = view.p[1];
+      if (CAM_H > b.z1) F.push(quad(rectPts(b, b.z1), b.top));
+      if (py < b.y0) F.push(quad([[b.x0, b.y0, b.z0], [b.x1, b.y0, b.z0], [b.x1, b.y0, b.z1], [b.x0, b.y0, b.z1]], b.fill));
+      if (py > b.y1) F.push(quad([[b.x0, b.y1, b.z0], [b.x1, b.y1, b.z0], [b.x1, b.y1, b.z1], [b.x0, b.y1, b.z1]], b.fill));
+      if (px < b.x0) F.push(quad([[b.x0, b.y0, b.z0], [b.x0, b.y1, b.z0], [b.x0, b.y1, b.z1], [b.x0, b.y0, b.z1]], b.side));
+      if (px > b.x1) F.push(quad([[b.x1, b.y0, b.z0], [b.x1, b.y1, b.z0], [b.x1, b.y1, b.z1], [b.x1, b.y0, b.z1]], b.side));
+      return F;
+    }
+    // Lamp sprite in metres, origin at the base, y up (flipped by the transform at draw time)
+    const LAMP_SVG = '<rect x="-0.09" y="0" width="0.18" height="0.04" fill="#5b5f6b"/>' +
+      '<rect x="-0.025" y="0.04" width="0.05" height="0.34" fill="#6f7482"/>' +
+      '<polygon points="-0.17,0.37 0.17,0.37 0.11,0.62 -0.11,0.62" fill="#f4d994" stroke="#c9a65a" stroke-width="0.012"/>' +
+      '<ellipse cx="0" cy="0.46" rx="0.07" ry="0.06" fill="#fff6d2" opacity="0.9"/>';
+    function lampBox() { // projected lamp bounds clipped to the frame, or null when out of view
+      const q = toCam(LAMP.x, LAMP.y, LAMP.z);
+      if (q[0] <= NEAR) return null;
+      const [u, v] = project(q), s = FX / q[0];
+      const x0 = Math.max(0, u - LAMP_W / 2 * s), x1 = Math.min(FW, u + LAMP_W / 2 * s);
+      const y0 = Math.max(0, v - LAMP_H * s), y1 = Math.min(FH, v + 0.02 * s);
+      if (x1 <= x0 || y1 <= y0) return null;
+      return { x: x0, y: y0, w: x1 - x0, h: y1 - y0, area: (x1 - x0) * (y1 - y0) / (FW * FH) };
+    }
+    function renderCamera(showLamp) {
+      const poly = (f) => {
+        const c = clip(f.pts.map(q => toCam(q[0], q[1], q[2]))); if (!c) return null;
+        const d = c.reduce((a, q) => a + q[0], 0) / c.length;
+        return { d, svg: `<polygon points="${c.map(q => project(q).map(v => v.toFixed(1)).join(",")).join(" ")}" fill="${mix(f.fill, FOG, Math.min(0.55, d / 14))}"/>` };
+      };
+      const out = [`<rect x="0" y="0" width="${FW}" height="${FH / 2}" fill="#eef1f6"/><rect x="0" y="${FH / 2}" width="${FW}" height="${FH / 2}" fill="#d9d5ce"/>`];
+      FLOORS.forEach(f => { const r = poly(quad(rectPts(f.r, 0), f.fill)); if (r) out.push(r.svg); });
+      const rug = poly(quad(rectPts(RUG, 0.002), RUG.fill)); if (rug) out.push(rug.svg);
+      const items = [];
+      STATIC.forEach(f => { const r = poly(f); if (r) items.push(r); });
+      BOXES.forEach(b => boxFaces(b).forEach(f => { const r = poly(f); if (r) items.push(r); }));
+      if (showLamp) {
+        const q = toCam(LAMP.x, LAMP.y, LAMP.z);
+        if (q[0] > NEAR) { const [u, v] = project(q), s = FX / q[0]; items.push({ d: q[0], svg: `<g transform="translate(${u.toFixed(1)},${v.toFixed(1)}) scale(${s.toFixed(2)},${(-s).toFixed(2)})">${LAMP_SVG}</g>` }); }
+      }
+      items.sort((a, b) => b.d - a.d);
+      items.forEach(i => out.push(i.svg));
+      cam.innerHTML = out.join("");
+    }
+
     // ---- UI ----
     const pos = document.getElementById("pos"), yaw = document.getElementById("yaw"), yawv = document.getElementById("yawv");
     const tbox = document.getElementById("tbox"), camnote = document.getElementById("camnote");
     const verdict = document.getElementById("verdict");
     const cSR = document.getElementById("c-sr"), cONS = document.getElementById("c-ons"), cOGS = document.getElementById("c-ogs");
     const row = (ok, name, val) => `<span class="ic ${ok ? "y" : "n"}">${ok ? "✓" : "✕"}</span><span>${name}</span><span class="val">${val}</span>`;
-    const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
 
     function update() {
       const s = pos.value / 1000 * total, { p, h: h0 } = along(s);
@@ -760,36 +863,33 @@
       // Metrics
       const dEP = geo(p, P_EP);
       const dONS = Math.min(...APPROACH.map(q => geo(p, q)));
-      const dT = d2(p, TGT);
-      const rel = wrap(Math.atan2(TGT[1] - p[1], TGT[0] - p[0]) - h);
-      const inFov = Math.abs(rel) <= HFOV / 2 * Math.PI / 180;
       const occ = occluded(p, TGT);
-      const wFrac = TGT_SIZE / (2 * dT * TAN_H), hFrac = TGT_SIZE / (2 * dT * TAN_V);
-      const area = Math.min(1, wFrac * hFrac);
-      const sr = dEP <= 3, ons = dONS <= 0.5, ogs = inFov && !occ && area >= 0.01;
+      view = { p, h };
+      const bb = lampBox();                 // null when the lamp is outside the frame
+      const area = bb ? bb.area : 0;
+      const sr = dEP <= 3, ons = dONS <= 0.5, ogs = !!bb && !occ && area >= 0.01;
 
       // Camera
-      if (inFov && !occ) {
-        const x = 0.5 + Math.tan(rel) / (2 * TAN_H);
+      renderCamera(!occ);
+      if (bb && !occ) {
         tbox.style.display = "block";
-        tbox.style.left = (x * 100) + "%";
-        tbox.style.width = Math.min(95, wFrac * 100) + "%";
-        tbox.style.height = Math.min(95, hFrac * 100) + "%";
+        tbox.style.left = (bb.x / FW * 100) + "%"; tbox.style.top = (bb.y / FH * 100) + "%";
+        tbox.style.width = (bb.w / FW * 100) + "%"; tbox.style.height = (bb.h / FH * 100) + "%";
         camnote.textContent = area >= 0.01 ? `Target covers ${(area * 100).toFixed(1)}% of the frame` : `Target only ${(area * 100).toFixed(2)}% of the frame (< 1%)`;
       } else {
         tbox.style.display = "none";
-        camnote.textContent = !inFov ? "Target is outside the field of view" : "Target is hidden behind a wall";
+        camnote.textContent = !bb ? "Target is outside the field of view" : "Target is hidden behind a wall";
       }
       sight.setAttribute("x1", p[0]); sight.setAttribute("y1", p[1]); sight.setAttribute("x2", TGT[0]); sight.setAttribute("y2", TGT[1]);
       sight.style.display = ogs ? "" : "none";
 
       cSR.innerHTML = row(sr, "SR: within 3 m of endpoint", dEP.toFixed(2) + " m");
       cONS.innerHTML = row(ons, "ONS@0.5m: at the target", dONS.toFixed(2) + " m");
-      cOGS.innerHTML = row(ogs, "OracleGS: target visible", !inFov ? "out of view" : occ ? "occluded" : (area * 100).toFixed(1) + "%");
+      cOGS.innerHTML = row(ogs, "OracleGS: target visible", !bb ? "out of view" : occ ? "occluded" : (area * 100).toFixed(1) + "%");
 
       const why = [];
       if (!ons) why.push(`it is still ${dONS.toFixed(1)} m from the target`);
-      if (!ogs) why.push(!inFov ? "the target is not in view" : occ ? "a wall blocks the view" : "the target is too small to ground");
+      if (!ogs) why.push(!bb ? "the target is not in view" : occ ? "a wall blocks the view" : "the target is too small to ground");
       if (sr && ons && ogs) { verdict.className = "verdict ok"; verdict.innerHTML = "<b>Grounded ✓</b>Success under both the standard and the instance-level criteria."; }
       else if (sr) { verdict.className = "verdict gap"; verdict.innerHTML = `<b>“Success” under standard VLN — but not grounded</b>However, ${why.join(", and ")}. This is the Last-3-Meter Grounding Gap.`; }
       else if (ons && ogs) { verdict.className = "verdict ok"; verdict.innerHTML = "<b>Grounded ✓</b>Reached and sees the target."; }
